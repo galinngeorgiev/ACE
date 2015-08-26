@@ -19,7 +19,7 @@ from theano.tensor.shared_randomstreams import RandomStreams
 
 srnd = MRG_RandomStreams()
 
-datasets_dir = 'C:\\Users\\galin.georgiev\\LightVerge\\Datasets\\' #'C:\\AI\Input\\VisualRecognition\\'
+datasets_dir = 'C:\\Users\\galin.georgiev\\LightVerge\\Datasets\\' 
 
 
 
@@ -68,8 +68,10 @@ def shared_uniform(shape, sv_adjusted=True, scale=1):
 	if (sv_adjusted):
 		if (len(shape) == 1):
 			scale_factor = scale * 0.5 / np.sqrt(shape[0])
-		else:
+		elif (len(shape) == 2):
 			scale_factor = scale * np.sqrt(6)/ (np.sqrt(shape[0] + shape[1]))
+		else:
+			scale_factor = scale * np.sqrt(6)/ (np.sqrt(shape[1] + shape[2]))
 	else:
 			scale_factor = scale
 	return shared(np.random.uniform(low=-scale, high=scale, size=shape))
@@ -78,14 +80,16 @@ def shared_uniform(shape, range=[-0.05,0.05]):
     return shared(np.random.uniform(low=range[0], high=range[1], size=shape))
 
 def shared_normal(shape, sv_adjusted=True, sigma=1.0):
-    if (sv_adjusted):
-        if (len(shape) == 1):
-            sigma_factor = sigma / np.sqrt(shape[0])
-        else:
-            sigma_factor = sigma / (np.sqrt(shape[0]) + np.sqrt(shape[1]))
-    else:
-        sigma_factor = sigma    
-    return shared(np.random.standard_normal(shape) * sigma_factor) #shared(np.random.randn(*shape) * sigma_factor)
+	if (sv_adjusted):
+		if (len(shape) == 1):
+			sigma_factor = sigma / np.sqrt(shape[0])
+		elif (len(shape) == 2):
+			sigma_factor = sigma / (np.sqrt(shape[0]) + np.sqrt(shape[1]))
+		else:
+			sigma_factor = sigma / (np.sqrt(shape[1]) + np.sqrt(shape[2]))
+	else:
+		sigma_factor = sigma    
+	return shared(np.random.standard_normal(shape) * sigma_factor) 
 
 def norm_gs(params, grads):
     norm_gs = 0.
@@ -95,11 +99,10 @@ def norm_gs(params, grads):
     return norm_gs
 
 #batch normalization (basic) 
-def batchnorm(h, epsilon=0.):
-	
-	m = T.mean(h, axis=0, keepdims=True) #h = h - T.mean(h,axis =0)  #de-mean every column
-	std = T.sqrt(T.mean(h*h,axis =0) + epsilon) #T.sqrt(T.var(h, axis = 0, keepdims=True) + epsilon) #inv_h_norm = 1/T.mean(h*h,axis =0) #1/T.sum(h*h,axis =0) # 
-	h = (h - m) /std #h * T.sqrt(inv_h_norm) #T.dot(h,T.nlinalg.diag(T.sqrt(inv_h_norm))) #normalize every node
+def batchnorm(h, epsilon=0.):	
+	m = T.mean(h, axis=0, keepdims=True) 
+	moment2 = T.sqrt(T.mean(h*h,axis =0) + epsilon) 
+	h = (h - m)/moment2 #de-mean and normalize every column
 	return h
 
 

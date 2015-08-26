@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{07034ace-4aa9-4f66-9b6b-f351b2802a89}</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>non-generative.py</StartupFile>
+    <StartupFile>generative.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,7 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="generative.py" />
     <Compile Include="non-generative.py" />
+    <Compile Include="optimizer.py" />
     <Compile Include="toolbox.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
